@@ -1,0 +1,171 @@
+<html>
+    <title>SUDOKU GAME</title>
+<head>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <p>SUDOKU</p>
+    
+    <div class="bg">
+        <div id="container"></div>
+    </div>
+</body>
+</html>
+<script>
+    //Day 1.
+    //Create grid using js,html and css
+    //Input random no. into each cell of the grid
+
+    //js representation of this sudoku grid
+    var sudoku = [[],[],[],[],[],[],[],[],[]]
+
+    function createGrid(){
+
+        //assigning the id to a variable myContainer
+        var myContainer = document.getElementById("container")
+
+        //just to verify
+        console.log("Hello world!")
+
+        //nested for loop to create row and column
+        for(var i=0; i<9; i++){
+            for(var j=0; j<9; j++){
+                
+                //creating a var myInput to create element and setting its id as rxc
+                //var number to generate random numbers
+                var myInput = document.createElement("input")
+                var number = Math.ceil(Math.random()*9)
+
+                //store row as i and column as j
+                myInput.id=`${i}${j}`
+                                
+                
+                //identify row for js
+                myInput.row = i
+
+                //identify column for js
+                myInput.col = j
+                
+
+                if(isSafe(sudoku, i, j, number)){
+
+                myInput.value = number
+                myInput.readOnly = true
+                }
+                else{
+                    number = 0
+                    myInput.value=''
+                }
+                
+                myContainer.appendChild(myInput);
+                sudoku[i][j] = number
+
+                //accept input using oninput
+                myInput.oninput= function(e){
+
+                checkAnswer(sudoku, e)
+                }
+            }
+        }
+        //log the js rep of the html grid
+        console.log(sudoku)
+    }
+    
+    createGrid()
+
+    //Day 2
+    //fix repetition of numbers
+    //row, column or all 3x3 grids sholdnt have no same numbers
+
+
+    //checking for a number
+        //num = number
+        //column = col
+        //row = row
+        //grid = sudoku
+    function isSafe(grid, row, column, num){
+
+        //Fix repetition
+        //no same no. in row, col and mini grid
+        for(var x=0; x<9; x++){
+
+            if(grid[row][x]==num){
+                return false
+            }
+
+        }
+        for(var y=0; y<9; y++){
+
+            if(grid[y][column]==num){
+                return false
+            }
+
+        }
+        var startRow = row - (row%3)
+        var startCol = column - (column%3)
+        for(var m=0; m<3;m++){
+            for(var n = 0;n<3;n++){
+                if(grid[m+startRow][n+startCol]==num){
+                    return false
+                }
+            
+            }
+
+        }
+        return true
+    }
+
+    function  checkAnswer(grid, e){
+        var row = e.target.row
+        var col = e.target.col
+        var num = Number(e.data)
+        var id = e.target.id
+
+        if(num == ''){
+            document.getElementById(id).style.backgroundColor='white'
+            return false
+        }
+
+        for(var x=0; x<9;x++){
+            if(grid[row][x]==num){
+                showColor('red',id)
+                return false
+            }
+        }
+        for(var y=0; y<9; y++){
+            if(grid[y][col]==num){
+                showColor('red',id)
+                return false
+            }
+        }
+
+        var startRow = row - (row%3)
+        var startCol = col - (col%3)
+
+        for(var m = 0; m<3; m++){
+            for(var n=0; n<3;n++){
+                if(grid[m+startRow][n+startCol]==num){
+                    showColor('red',id)
+                    return false
+                }
+            }
+        }
+        showColor('green',id)
+        return true
+    }
+
+    function showColor(color,id){
+        var inp = document.getElementById(id)
+        if(color=='red'){
+            inp.style.backgroundColor='red'
+        }
+        else{
+            inp.style.backgroundColor='green'
+        }
+    }
+    
+
+</script>
